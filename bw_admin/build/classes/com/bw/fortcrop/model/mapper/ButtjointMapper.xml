@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="Buttjoint">
+
+	<resultMap id="RM.Buttjoint" type="com.bw.fortcrop.model.Buttjoint">
+        <result property="flowId" column="flow_id"/>
+        <result property="jointId" column="joint_id"/>
+        <result property="jointCharacter" column="joint_character"/>
+        <result property="beJointId" column="be_joint_id"/>
+        <result property="beJointCharacter" column="be_joint_character"/>
+        <result property="jointStatus" column="joint_status"/>
+        <result property="jointTime" column="joint_time"/>
+        <result property="userName" column="user_name"/>
+        <result property="jointName" column="joint_name"/>
+         <result property="beJointName" column="be_joint_name"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Buttjoint.columns">
+	    <![CDATA[
+		flow_id,joint_id,joint_character,be_joint_id,be_joint_character,joint_status,joint_time,joint_name,be_joint_name
+	    ]]>
+	</sql>
+	
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="Buttjoint.insert" useGeneratedKeys="true" keyProperty="flowId">
+    <![CDATA[
+        INSERT INTO bw_buttjoint (
+        	flow_id ,
+        	joint_id ,
+        	joint_character ,
+        	be_joint_id ,
+        	be_joint_character ,
+        	joint_status ,
+        	joint_time 
+        ) VALUES (
+        	#{flowId} ,
+        	#{jointId} ,
+        	#{jointCharacter} ,
+        	#{beJointId} ,
+        	#{beJointCharacter} ,
+        	#{jointStatus} ,
+        	#{jointTime} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="Buttjoint.update" >
+    <![CDATA[
+        UPDATE bw_buttjoint SET
+	        joint_id = #{jointId} ,
+	        joint_character = #{jointCharacter} ,
+	        be_joint_id = #{beJointId} ,
+	        be_joint_character = #{beJointCharacter} ,
+	        joint_status = #{jointStatus} ,
+	        joint_time = #{jointTime} 
+        WHERE 
+	        flow_id = #{flowId} 
+    ]]>
+	</update>
+
+    <delete id="Buttjoint.delete">
+    <![CDATA[
+        DELETE FROM bw_buttjoint WHERE
+        flow_id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="Buttjoint.getById" resultMap="RM.Buttjoint">
+		SELECT <include refid="Buttjoint.columns" />
+	    
+		    FROM bw_buttjoint
+				
+	        WHERE 
+		        flow_id = #{id} 
+	   
+	</select>
+	
+	<sql id="Buttjoint.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(flowId)">
+				AND  flow_id = #{flowId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(jointId)">
+				AND  joint_id = #{jointId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(jointCharacter)">
+				AND  joint_character = #{jointCharacter}
+			</if>
+	       <if test="@Ognl@isNotEmpty(beJointId)">
+				AND  be_joint_id = #{beJointId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(beJointCharacter)">
+				AND  be_joint_character = #{beJointCharacter}
+			</if>
+	       <if test="@Ognl@isNotEmpty(jointStatus)">
+				AND  joint_status = #{jointStatus}
+			</if>
+	       <if test="@Ognl@isNotEmpty(jointTimeBegin)">
+				AND  joint_time >= #{jointTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(jointTimeEnd)">
+				AND  joint_time &lt;= #{jointTimeEnd}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(jointName)">
+				AND  joint_name = #{jointName}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(beJointName)">
+				AND  be_joint_name = #{beJointName}
+		   </if>
+		</where>
+	</sql>
+		
+    <select id="Buttjoint.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_buttjoint  
+		<include refid="Buttjoint.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+	
+    <select id="Buttjoint.findPage" resultMap="RM.Buttjoint">
+    	SELECT <include refid="Buttjoint.columns" />
+	    	FROM bw_buttjoint 
+		<include refid="Buttjoint.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

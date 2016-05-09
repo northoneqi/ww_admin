@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="Tag">
+
+	<resultMap id="RM.Tag" type="com.bw.fortcrop.model.Tag">
+        <result property="flowId" column="flow_id"/>
+        <result property="tagId" column="tag_id"/>
+        <result property="tagTypeName" column="tag_type_name"/>
+        <result property="tagValue" column="tag_value"/>
+        <result property="tagSort" column="tag_sort"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Tag.columns">
+	    <![CDATA[
+		flow_id,tag_id,tag_type_name,tag_value,tag_sort
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="Tag.insert" useGeneratedKeys="true" keyProperty="flowId">
+    <![CDATA[
+        INSERT INTO bw_tag (
+        	flow_id ,
+        	tag_id ,
+        	tag_type_name ,
+        	tag_value ,
+        	tag_sort 
+        ) VALUES (
+        	#{flowId} ,
+        	#{tagId} ,
+        	#{tagTypeName} ,
+        	#{tagValue} ,
+        	#{tagSort} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="Tag.update" >
+    <![CDATA[
+        UPDATE bw_tag SET
+	        tag_id = #{tagId} ,
+	        tag_type_name = #{tagTypeName} ,
+	        tag_value = #{tagValue} ,
+	        tag_sort = #{tagSort} 
+        WHERE 
+	        flow_id = #{flowId} 
+    ]]>
+	</update>
+
+    <delete id="Tag.delete">
+    <![CDATA[
+        DELETE FROM bw_tag WHERE
+        flow_id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="Tag.getById" resultMap="RM.Tag">
+		SELECT <include refid="Tag.columns" />
+	    <![CDATA[
+		    FROM bw_tag 
+	        WHERE 
+		        flow_id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="Tag.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(flowId)">
+				AND flow_id = #{flowId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(tagId)">
+				AND tag_id = #{tagId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(tagTypeName)">
+				AND tag_type_name = #{tagTypeName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(tagValue)">
+				AND tag_value = #{tagValue}
+			</if>
+	       <if test="@Ognl@isNotEmpty(tagSort)">
+				AND tag_sort = #{tagSort}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="Tag.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_tag 
+		<include refid="Tag.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="Tag.findPage" resultMap="RM.Tag">
+    	SELECT <include refid="Tag.columns" />
+	    FROM bw_tag 
+		<include refid="Tag.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	<select id="Tag.findAll" resultMap="RM.Tag">
+		SELECT <include refid="Tag.columns" />
+		FROM bw_tag ORDER BY tag_id ASC
+	</select>
+</mapper>
+

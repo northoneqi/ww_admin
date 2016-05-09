@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="CompanyDentification">
+
+	<resultMap id="RM.CompanyDentification" type="com.bw.fortcrop.model.CompanyDentification">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="businessLicense" column="business_license"/>
+        <result property="companyName" column="company_name"/>
+        <result property="linkman" column="linkman"/>
+        <result property="companyNum" column="company_num"/>
+        <result property="certificationStatus" column="certification_status"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="CompanyDentification.columns">
+	    <![CDATA[
+		id,user_id,business_license,company_name,linkman,company_num,certification_status
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="CompanyDentification.insert" useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+        INSERT INTO bw_company_dentification (
+        	id ,
+        	user_id ,
+        	business_license ,
+        	company_name ,
+        	linkman ,
+        	company_num ,
+        	certification_status 
+        ) VALUES (
+        	#{id} ,
+        	#{userId} ,
+        	#{businessLicense} ,
+        	#{companyName} ,
+        	#{linkman} ,
+        	#{companyNum} ,
+        	#{certificationStatus} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="CompanyDentification.update" >
+    <![CDATA[
+        UPDATE bw_company_dentification SET
+	        user_id = #{userId} ,
+	        business_license = #{businessLicense} ,
+	        company_name = #{companyName} ,
+	        linkman = #{linkman} ,
+	        company_num = #{companyNum} ,
+	        certification_status = #{certificationStatus} 
+        WHERE 
+	        id = #{id} 
+    ]]>
+	</update>
+
+    <delete id="CompanyDentification.delete">
+    <![CDATA[
+        DELETE FROM bw_company_dentification WHERE
+        id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="CompanyDentification.getById" resultMap="RM.CompanyDentification">
+		SELECT <include refid="CompanyDentification.columns" />
+	    <![CDATA[
+		    FROM bw_company_dentification 
+	        WHERE 
+		        id = #{id} 
+	    ]]>
+	</select>
+	
+    <select id="CompanyDentification.getByuserId" resultMap="RM.CompanyDentification" >
+		SELECT <include refid="CompanyDentification.columns" />
+	    <![CDATA[
+		    FROM bw_company_dentification 
+	        WHERE 
+		        user_id = #{userId} 
+	    ]]>
+	</select>
+	
+	<sql id="CompanyDentification.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(id)">
+				AND id = #{id}
+			</if>
+	       <if test="@Ognl@isNotEmpty(userId)">
+				AND user_id = #{userId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(businessLicense)">
+				AND business_license = #{businessLicense}
+			</if>
+	       <if test="@Ognl@isNotEmpty(companyName)">
+				AND company_name = #{companyName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(linkman)">
+				AND linkman = #{linkman}
+			</if>
+	       <if test="@Ognl@isNotEmpty(companyNum)">
+				AND company_num = #{companyNum}
+			</if>
+	       <if test="@Ognl@isNotEmpty(certificationStatus)">
+				AND certification_status = #{certificationStatus}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="CompanyDentification.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_company_dentification 
+		<include refid="CompanyDentification.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="CompanyDentification.findPage" resultMap="RM.CompanyDentification">
+    	SELECT <include refid="CompanyDentification.columns" />
+	    FROM bw_company_dentification 
+		<include refid="CompanyDentification.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

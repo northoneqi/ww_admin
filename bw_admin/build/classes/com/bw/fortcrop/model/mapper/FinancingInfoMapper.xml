@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="FinancingInfo">
+
+	<resultMap id="RM.FinancingInfo" type="com.bw.fortcrop.model.FinancingInfo">
+        <result property="userId" column="user_id"/>
+        <result property="logoImage" column="logo_image"/>
+        <result property="financingName" column="financing_name"/>
+        <result property="financingType" column="financing_type"/>
+        <result property="financingLocation" column="financing_location"/>
+        <result property="phone" column="phone"/>
+        <result property="scientificIntroduce" column="scientific_introduce"/>
+        <result property="email" column="email"/>
+        <result property="addressdetail" column="addressdetail"/>
+        <result property="financingProduct" column="financing_product"/>
+        <result property="financingSite" column="financing_site"/>
+        <result property="signTime" column="sign_time"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="FinancingInfo.columns">
+	    <![CDATA[
+		user_id,logo_image,financing_name,financing_type,financing_location,phone,scientific_introduce,email,addressdetail,financing_product,financing_site,sign_time
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="FinancingInfo.insert" useGeneratedKeys="true" keyProperty="userId">
+    <![CDATA[
+        INSERT INTO bw_financing_info (
+        	user_id ,
+        	logo_image ,
+        	financing_name ,
+        	financing_type ,
+        	financing_location ,
+        	phone ,
+        	scientific_introduce ,
+        	email ,
+        	addressdetail ,
+        	financing_product ,
+        	financing_site ,
+        	sign_time 
+        ) VALUES (
+        	#{userId} ,
+        	#{logoImage} ,
+        	#{financingName} ,
+        	#{financingType} ,
+        	#{financingLocation} ,
+        	#{phone} ,
+        	#{scientificIntroduce} ,
+        	#{email} ,
+        	#{addressdetail} ,
+        	#{financingProduct} ,
+        	#{financingSite} ,
+        	#{signTime} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="FinancingInfo.update" >
+    <![CDATA[
+        UPDATE bw_financing_info SET
+	        logo_image = #{logoImage} ,
+	        financing_name = #{financingName} ,
+	        financing_type = #{financingType} ,
+	        financing_location = #{financingLocation} ,
+	        phone = #{phone} ,
+	        scientific_introduce = #{scientificIntroduce} ,
+	        email = #{email} ,
+	        addressdetail = #{addressdetail} ,
+	        financing_product = #{financingProduct} ,
+	        financing_site = #{financingSite} ,
+	        sign_time = #{signTime} 
+        WHERE 
+	        user_id = #{userId} 
+    ]]>
+	</update>
+
+    <delete id="FinancingInfo.delete">
+    <![CDATA[
+        DELETE FROM bw_financing_info WHERE
+        user_id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="FinancingInfo.getById" resultMap="RM.FinancingInfo">
+		SELECT <include refid="FinancingInfo.columns" />
+	    <![CDATA[
+		    FROM bw_financing_info 
+	        WHERE 
+		        user_id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="FinancingInfo.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(userId)">
+				AND user_id = #{userId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(logoImage)">
+				AND logo_image = #{logoImage}
+			</if>
+	       <if test="@Ognl@isNotEmpty(financingName)">
+				AND financing_name = #{financingName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(financingType)">
+				AND financing_type = #{financingType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(financingLocation)">
+				AND financing_location = #{financingLocation}
+			</if>
+	       <if test="@Ognl@isNotEmpty(phone)">
+				AND phone = #{phone}
+			</if>
+	       <if test="@Ognl@isNotEmpty(scientificIntroduce)">
+				AND scientific_introduce = #{scientificIntroduce}
+			</if>
+	       <if test="@Ognl@isNotEmpty(email)">
+				AND email = #{email}
+			</if>
+	       <if test="@Ognl@isNotEmpty(addressdetail)">
+				AND addressdetail = #{addressdetail}
+			</if>
+	       <if test="@Ognl@isNotEmpty(financingProduct)">
+				AND financing_product = #{financingProduct}
+			</if>
+	       <if test="@Ognl@isNotEmpty(financingSite)">
+				AND financing_site = #{financingSite}
+			</if>
+	       <if test="@Ognl@isNotEmpty(signTimeBegin)">
+				AND sign_time >= #{signTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(signTimeEnd)">
+				AND sign_time &lt;= #{signTimeEnd}
+		   </if>
+		</where>
+	</sql>
+		
+    <select id="FinancingInfo.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_financing_info 
+		<include refid="FinancingInfo.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="FinancingInfo.findPage" resultMap="RM.FinancingInfo">
+    	SELECT <include refid="FinancingInfo.columns" />
+	    FROM bw_financing_info 
+		<include refid="FinancingInfo.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

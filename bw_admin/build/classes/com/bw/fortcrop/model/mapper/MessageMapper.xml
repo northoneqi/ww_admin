@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="Message">
+
+	<resultMap id="RM.Message" type="com.bw.fortcrop.model.Message">
+        <result property="messageId" column="message_id"/>
+        <result property="sendId" column="send_id"/>
+        <result property="reseiveId" column="reseive_id"/>
+        <result property="reseiveIdentity" column="reseive_identity"/>
+        <result property="messageContent" column="message_content"/>
+        <result property="messageTime" column="message_time"/>
+        <result property="messageType" column="message_type"/>
+        <result property="deleteSign" column="delete_sign"/>
+        <result property="sendName" column="send_name"/>
+        <result property="userName" column="user_name"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Message.columns">
+	    <![CDATA[
+		message_id,send_id,reseive_id,reseive_identity,message_content,message_time,message_type,delete_sign,send_name
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="Message.insert" useGeneratedKeys="true" keyProperty="messageId">
+    <![CDATA[
+        INSERT INTO bw_message (
+        	send_id ,
+        	reseive_id ,
+        	reseive_identity ,
+        	message_content ,
+        	message_time ,
+        	message_type ,
+        	delete_sign ,
+        	send_name
+        ) VALUES (
+        	#{sendId} ,
+        	#{reseiveId} ,
+        	#{reseiveIdentity} ,
+        	#{messageContent} ,
+        	curtime() ,
+        	#{messageType} ,
+        	#{deleteSign} ,
+        	#{sendName}
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="Message.update" >
+    <![CDATA[
+        UPDATE bw_message SET
+	        send_id = #{sendId} ,
+	        reseive_id = #{reseiveId} ,
+	        reseive_identity = #{reseiveIdentity} ,
+	        message_content = #{messageContent} ,
+	        message_time = curtime() ,
+	        message_type = #{messageType} ,
+	        delete_sign = #{deleteSign} ,
+	        send_name = #{sendName}
+        WHERE 
+	        message_id = #{messageId} 
+    ]]>
+	</update>
+
+    <delete id="Message.delete">
+    <![CDATA[
+        DELETE FROM bw_message WHERE
+        message_id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="Message.getById" resultMap="RM.Message" parameterType="String">
+		SELECT m.*,u.*
+	    <![CDATA[
+		    FROM bw_message m left join bw_user_info u on m.reseive_id = u.user_id
+	        WHERE 
+		        m.message_id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="Message.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(messageId)">
+				AND message_id = #{messageId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(sendId)">
+				AND send_id = #{sendId}
+			</if>
+			<if test="@Ognl@isNotEmpty(sendName)">
+				AND send_name like '%${sendName}%'
+			</if>
+	       <if test="@Ognl@isNotEmpty(reseiveId)">
+				AND reseive_id = #{reseiveId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(reseiveIdentity)">
+				AND reseive_identity = #{reseiveIdentity}
+			</if>
+	       <if test="@Ognl@isNotEmpty(messageContent)">
+				AND message_content = #{messageContent}
+			</if>
+	       <if test="@Ognl@isNotEmpty(messageTimeBegin)">
+				AND message_time >= #{messageTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(messageTimeEnd)">
+				AND message_time &lt;= #{messageTimeEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(messageType)">
+				AND message_type = #{messageType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(deleteSign)">
+				AND delete_sign = #{deleteSign}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="Message.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_message 
+		<include refid="Message.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="Message.findPage" resultMap="RM.Message">
+    	SELECT m.*,u.*
+	    FROM bw_message m left join bw_user_info u on m.reseive_id = u.user_id
+		<include refid="Message.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

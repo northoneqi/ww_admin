@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="Banner">
+
+	<resultMap id="RM.Banner" type="com.bw.fortcrop.model.Banner">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="picture" column="picture"/>
+        <result property="href" column="href"/>
+        <result property="isShow" column="isShow"/>
+        <result property="createDatetime" column="createDatetime"/>
+        <result property="deleteFlag" column="deleteFlag"/>
+        <result property="weight" column="weight"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Banner.columns">
+	    <![CDATA[
+		id,title,picture,href,isShow,createDatetime,deleteFlag,weight
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="Banner.insert" useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+        INSERT INTO bw_banner (
+        	id ,
+        	title ,
+        	picture ,
+        	href ,
+        	isShow ,
+        	createDatetime ,
+        	deleteFlag ,
+        	weight 
+        ) VALUES (
+        	#{id} ,
+        	#{title} ,
+        	#{picture} ,
+        	#{href} ,
+        	#{isShow} ,
+        	#{createDatetime} ,
+        	#{deleteFlag} ,
+        	#{weight} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="Banner.update" >
+    <![CDATA[
+        UPDATE bw_banner SET
+	        title = #{title} ,
+	        picture = #{picture} ,
+	        href = #{href} ,
+	        isShow = #{isShow} ,
+	        createDatetime = #{createDatetime} ,
+	        deleteFlag = #{deleteFlag} ,
+	        weight = #{weight} 
+        WHERE 
+	        id = #{id} 
+    ]]>
+	</update>
+
+    <delete id="Banner.delete">
+    <![CDATA[
+        DELETE FROM bw_banner WHERE
+        id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="Banner.getById" resultMap="RM.Banner">
+		SELECT <include refid="Banner.columns" />
+	    <![CDATA[
+		    FROM bw_banner 
+	        WHERE 
+		        id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="Banner.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(id)">
+				AND id = #{id}
+			</if>
+	       <if test="@Ognl@isNotEmpty(title)">
+				AND title = #{title}
+			</if>
+	       <if test="@Ognl@isNotEmpty(picture)">
+				AND picture = #{picture}
+			</if>
+	       <if test="@Ognl@isNotEmpty(href)">
+				AND href = #{href}
+			</if>
+	       <if test="@Ognl@isNotEmpty(isShow)">
+				AND isShow = #{isShow}
+			</if>
+	       <if test="@Ognl@isNotEmpty(createDatetimeBegin)">
+				AND createDatetime >= #{createDatetimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(createDatetimeEnd)">
+				AND createDatetime &lt;= #{createDatetimeEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(deleteFlag)">
+				AND deleteFlag = #{deleteFlag}
+			</if>
+	       <if test="@Ognl@isNotEmpty(weight)">
+				AND weight = #{weight}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="Banner.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_banner 
+		<include refid="Banner.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="Banner.findPage" resultMap="RM.Banner">
+    	SELECT <include refid="Banner.columns" />
+	    FROM bw_banner 
+		<include refid="Banner.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="IndustryPlatts">
+
+	<resultMap id="RM.IndustryPlatts" type="com.bw.fortcrop.model.IndustryPlatts">
+        <result property="id" column="id"/>
+        <result property="platDate" column="plat_date"/>
+        <result property="plattDetail" column="platt_detail"/>
+        <result property="plattSign" column="platt_sign"/>
+        <result property="plattStatus" column="platt_status"/>
+        <result property="plattTitle" column="platt_title"/>
+        <result property="plattAuth" column="platt_auth"/>
+        <result property="plattUpdate" column="platt_update"/>
+        <result property="plattModifer" column="platt_modifer"/>
+        <result property="plattKeyword" column="platt_keyword"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="IndustryPlatts.columns">
+	    <![CDATA[
+		id,plat_date,platt_detail,platt_sign,platt_status,platt_title,platt_auth,platt_update,platt_modifer,platt_keyword
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="IndustryPlatts.insert" useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+        INSERT INTO Bw_IndustryPlatts (
+        	id ,
+        	plat_date ,
+        	platt_detail ,
+        	platt_sign ,
+        	platt_status ,
+        	platt_title ,
+        	platt_auth ,
+        	platt_update ,
+        	platt_modifer ,
+        	platt_keyword 
+        ) VALUES (
+        	#{id} ,
+        	#{platDate} ,
+        	#{plattDetail} ,
+        	#{plattSign} ,
+        	#{plattStatus} ,
+        	#{plattTitle} ,
+        	#{plattAuth} ,
+        	#{plattUpdate} ,
+        	#{plattModifer} ,
+        	#{plattKeyword} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="IndustryPlatts.update" >
+    <![CDATA[
+        UPDATE Bw_IndustryPlatts SET
+	        plat_date = #{platDate} ,
+	        platt_detail = #{plattDetail} ,
+	        platt_sign = #{plattSign} ,
+	        platt_status = #{plattStatus} ,
+	        platt_title = #{plattTitle} ,
+	        platt_auth = #{plattAuth} ,
+	        platt_update = curtime() ,
+	        platt_modifer = #{plattModifer} ,
+	        platt_keyword = #{plattKeyword} 
+        WHERE 
+	        id = #{id} 
+    ]]>
+	</update>
+
+    <delete id="IndustryPlatts.delete">
+    <![CDATA[
+        DELETE FROM Bw_IndustryPlatts WHERE
+        id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="IndustryPlatts.getById" resultMap="RM.IndustryPlatts">
+		SELECT <include refid="IndustryPlatts.columns" />
+	    <![CDATA[
+		    FROM Bw_IndustryPlatts 
+	        WHERE 
+		        id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="IndustryPlatts.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(id)">
+				AND id = #{id}
+			</if>
+	       <if test="@Ognl@isNotEmpty(platDateBegin)">
+				AND plat_date >= #{platDateBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(platDateEnd)">
+				AND plat_date &lt;= #{platDateEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(plattDetail)">
+				AND platt_detail = #{plattDetail}
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattSign)">
+				AND platt_sign like '%${plattSign}%'
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattStatus)">
+				AND platt_status = #{plattStatus}
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattTitle)">
+				AND platt_title like '%${plattTitle}%'
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattAuth)">
+				AND platt_auth like '%${plattAuth}%'
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattUpdateBegin)">
+				AND platt_update >= #{plattUpdateBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(plattUpdateEnd)">
+				AND platt_update &lt;= #{plattUpdateEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(plattModifer)">
+				AND platt_modifer like '%${plattModifer}'
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattKeyword)">
+				AND platt_keyword = #{plattKeyword}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="IndustryPlatts.findPage.count" resultType="long">
+        SELECT count(*) FROM Bw_IndustryPlatts 
+		<include refid="IndustryPlatts.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="IndustryPlatts.findPage" resultMap="RM.IndustryPlatts">
+    	SELECT <include refid="IndustryPlatts.columns" />
+	    FROM Bw_IndustryPlatts 
+		<include refid="IndustryPlatts.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

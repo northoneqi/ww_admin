@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="ProjectNeed">
+
+	<resultMap id="RM.ProjectNeed" type="com.bw.fortcrop.model.ProjectNeed">
+        <result property="flowId" column="flow_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="projectBusinessOne" column="project_business_one"/>
+        <result property="projectBusinessTwo" column="project_business_two"/>
+        <result property="cooperationWay" column="cooperation_way"/>
+        <result property="projectDetail" column="project_detail"/>
+        <result property="companyName" column="company_name"/>
+        <result property="professorLocation" column="professor_location"/>
+        <result property="professorBusiness" column="professor_business"/>
+        <result property="professorTime" column="professor_time"/>
+        <result property="projectFlag" column="project_flag"/>
+        <result property="userLogo" column="user_logo"/>
+        <result property="buttjoinId" column="buttjoin_id"/>
+        <result property="deleteflag" column="deleteflag"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ProjectNeed.columns">
+	    <![CDATA[
+		flow_id,user_id,project_name,project_business_one,project_business_two,cooperation_way,project_detail,company_name,professor_location,professor_business,professor_time,project_flag,user_logo,buttjoin_id,deleteflag
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="ProjectNeed.insert" useGeneratedKeys="true" keyProperty="flowId">
+    <![CDATA[
+        INSERT INTO bw_project_need (
+        	flow_id ,
+        	user_id ,
+        	project_name ,
+        	project_business_one ,
+        	project_business_two ,
+        	cooperation_way ,
+        	project_detail ,
+        	company_name ,
+        	professor_location ,
+        	professor_business ,
+        	professor_time ,
+        	project_flag ,
+        	user_logo ,
+        	buttjoin_id ,
+        	deleteflag 
+        ) VALUES (
+        	#{flowId} ,
+        	#{userId} ,
+        	#{projectName} ,
+        	#{projectBusinessOne} ,
+        	#{projectBusinessTwo} ,
+        	#{cooperationWay} ,
+        	#{projectDetail} ,
+        	#{companyName} ,
+        	#{professorLocation} ,
+        	#{professorBusiness} ,
+        	#{professorTime} ,
+        	#{projectFlag} ,
+        	#{userLogo} ,
+        	#{buttjoinId} ,
+        	#{deleteflag} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="ProjectNeed.update" >
+    <![CDATA[
+        UPDATE bw_project_need SET
+	        user_id = #{userId} ,
+	        project_name = #{projectName} ,
+	        project_business_one = #{projectBusinessOne} ,
+	        project_business_two = #{projectBusinessTwo} ,
+	        cooperation_way = #{cooperationWay} ,
+	        project_detail = #{projectDetail} ,
+	        company_name = #{companyName} ,
+	        professor_location = #{professorLocation} ,
+	        professor_business = #{professorBusiness} ,
+	        professor_time = #{professorTime} ,
+	        project_flag = #{projectFlag} ,
+	        user_logo = #{userLogo} ,
+	        buttjoin_id = #{buttjoinId} ,
+	        deleteflag = #{deleteflag} 
+        WHERE 
+	        flow_id = #{flowId} 
+    ]]>
+	</update>
+
+    <delete id="ProjectNeed.delete">
+    <![CDATA[
+        DELETE FROM bw_project_need WHERE
+        flow_id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="ProjectNeed.getById" resultMap="RM.ProjectNeed">
+		SELECT <include refid="ProjectNeed.columns" />
+	    <![CDATA[
+		    FROM bw_project_need 
+	        WHERE 
+		        flow_id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="ProjectNeed.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(flowId)">
+				AND flow_id = #{flowId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(userId)">
+				AND user_id = #{userId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectName)">
+				AND project_name = #{projectName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectBusinessOne)">
+				AND project_business_one = #{projectBusinessOne}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectBusinessTwo)">
+				AND project_business_two = #{projectBusinessTwo}
+			</if>
+	       <if test="@Ognl@isNotEmpty(cooperationWay)">
+				AND cooperation_way = #{cooperationWay}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectDetail)">
+				AND project_detail = #{projectDetail}
+			</if>
+	       <if test="@Ognl@isNotEmpty(companyName)">
+				AND company_name = #{companyName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorLocation)">
+				AND professor_location = #{professorLocation}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorBusiness)">
+				AND professor_business = #{professorBusiness}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorTimeBegin)">
+				AND professor_time >= #{professorTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(professorTimeEnd)">
+				AND professor_time &lt;= #{professorTimeEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(projectFlag)">
+				AND project_flag = #{projectFlag}
+			</if>
+	       <if test="@Ognl@isNotEmpty(userLogo)">
+				AND user_logo = #{userLogo}
+			</if>
+	       <if test="@Ognl@isNotEmpty(buttjoinId)">
+				AND buttjoin_id = #{buttjoinId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(deleteflag)">
+				AND deleteflag = #{deleteflag}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="ProjectNeed.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_project_need 
+		<include refid="ProjectNeed.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="ProjectNeed.findPage" resultMap="RM.ProjectNeed">
+    	SELECT <include refid="ProjectNeed.columns" />
+	    FROM bw_project_need 
+		<include refid="ProjectNeed.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="ProfessorResult">
+
+	<resultMap id="RM.ProfessorResult" type="com.bw.fortcrop.model.ProfessorResult">
+        <result property="resultId" column="result_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="resultName" column="result_name"/>
+        <result property="resultType" column="result_type"/>
+        <result property="resultTime" column="result_time"/>
+        <result property="resultStatus" column="result_status"/>
+        <result property="resultTrade" column="result_trade"/>
+        <result property="resultMoney" column="result_money"/>
+        <result property="resultIntroduce" column="result_introduce"/>
+        <result property="resultLocation" column="result_location"/>
+        <result property="resultBusinessOne" column="result_business_one"/>
+        <result property="resultBusinessTwo" column="result_business_two"/>
+        <result property="resultLabel" column="result_label"/>
+        <result property="resultFlag" column="result_flag"/>
+        <result property="picUuid" column="pic_uuid"/>
+        <result property="buttjointId" column="buttjoint_id"/>
+        <result property="resultDeleteFlag" column="result_delete_flag"/>
+        <result property="resultPublishTime" column="result_publish_time"/>
+        <result property="jurisdiction" column="jurisdiction"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ProfessorResult.columns">
+	    <![CDATA[
+		result_id,user_id,result_name,result_type,result_time,result_status,result_trade,result_money,result_introduce,result_location,result_business_one,result_business_two,result_label,result_flag,pic_uuid,buttjoint_id,result_delete_flag,result_publish_time,jurisdiction
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="ProfessorResult.insert" useGeneratedKeys="true" keyProperty="resultId">
+    <![CDATA[
+        INSERT INTO bw_professor_result (
+        	result_id ,
+        	user_id ,
+        	result_name ,
+        	result_type ,
+        	result_time ,
+        	result_status ,
+        	result_trade ,
+        	result_money ,
+        	result_introduce ,
+        	result_location ,
+        	result_business_one ,
+        	result_business_two ,
+        	result_label ,
+        	result_flag ,
+        	pic_uuid ,
+        	buttjoint_id ,
+        	result_delete_flag ,
+        	result_publish_time ,
+        	jurisdiction 
+        ) VALUES (
+        	#{resultId} ,
+        	#{userId} ,
+        	#{resultName} ,
+        	#{resultType} ,
+        	#{resultTime} ,
+        	#{resultStatus} ,
+        	#{resultTrade} ,
+        	#{resultMoney} ,
+        	#{resultIntroduce} ,
+        	#{resultLocation} ,
+        	#{resultBusinessOne} ,
+        	#{resultBusinessTwo} ,
+        	#{resultLabel} ,
+        	#{resultFlag} ,
+        	#{picUuid} ,
+        	#{buttjointId} ,
+        	#{resultDeleteFlag} ,
+        	#{resultPublishTime} ,
+        	#{jurisdiction} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="ProfessorResult.update" >
+    <![CDATA[
+        UPDATE bw_professor_result SET
+	        user_id = #{userId} ,
+	        result_name = #{resultName} ,
+	        result_type = #{resultType} ,
+	        result_time = #{resultTime} ,
+	        result_status = #{resultStatus} ,
+	        result_trade = #{resultTrade} ,
+	        result_money = #{resultMoney} ,
+	        result_introduce = #{resultIntroduce} ,
+	        result_location = #{resultLocation} ,
+	        result_business_one = #{resultBusinessOne} ,
+	        result_business_two = #{resultBusinessTwo} ,
+	        result_label = #{resultLabel} ,
+	        result_flag = #{resultFlag} ,
+	        pic_uuid = #{picUuid} ,
+	        buttjoint_id = #{buttjointId} ,
+	        result_delete_flag = #{resultDeleteFlag} ,
+	        result_publish_time = #{resultPublishTime} ,
+	        jurisdiction = #{jurisdiction} 
+        WHERE 
+	        result_id = #{resultId} 
+    ]]>
+	</update>
+
+    <delete id="ProfessorResult.delete">
+    <![CDATA[
+        DELETE FROM bw_professor_result WHERE
+        result_id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="ProfessorResult.getById" resultMap="RM.ProfessorResult">
+		SELECT <include refid="ProfessorResult.columns" />
+	    <![CDATA[
+		    FROM bw_professor_result 
+	        WHERE 
+		        result_id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="ProfessorResult.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(resultId)">
+				AND result_id = #{resultId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(userId)">
+				AND user_id = #{userId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultName)">
+				AND result_name = #{resultName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultType)">
+				AND result_type = #{resultType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultTimeBegin)">
+				AND result_time >= #{resultTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(resultTimeEnd)">
+				AND result_time &lt;= #{resultTimeEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(resultStatus)">
+				AND result_status = #{resultStatus}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultTrade)">
+				AND result_trade = #{resultTrade}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultMoney)">
+				AND result_money = #{resultMoney}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultIntroduce)">
+				AND result_introduce = #{resultIntroduce}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultLocation)">
+				AND result_location = #{resultLocation}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultBusinessOne)">
+				AND result_business_one = #{resultBusinessOne}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultBusinessTwo)">
+				AND result_business_two = #{resultBusinessTwo}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultLabel)">
+				AND result_label = #{resultLabel}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultFlag)">
+				AND result_flag = #{resultFlag}
+			</if>
+	       <if test="@Ognl@isNotEmpty(picUuid)">
+				AND pic_uuid = #{picUuid}
+			</if>
+	       <if test="@Ognl@isNotEmpty(buttjointId)">
+				AND buttjoint_id = #{buttjointId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultDeleteFlag)">
+				AND result_delete_flag = #{resultDeleteFlag}
+			</if>
+	       <if test="@Ognl@isNotEmpty(resultPublishTimeBegin)">
+				AND result_publish_time >= #{resultPublishTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(resultPublishTimeEnd)">
+				AND result_publish_time &lt;= #{resultPublishTimeEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(jurisdiction)">
+				AND jurisdiction = #{jurisdiction}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="ProfessorResult.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_professor_result 
+		<include refid="ProfessorResult.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="ProfessorResult.findPage" resultMap="RM.ProfessorResult">
+    	SELECT <include refid="ProfessorResult.columns" />
+	    FROM bw_professor_result 
+		<include refid="ProfessorResult.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	<delete id="ProfessorResult.delete.byUserId">
+	<![CDATA[
+		DELETE FROM bw_professor_result WHERE
+        user_id = #{userId}
+	]]>
+	</delete>
+</mapper>
+

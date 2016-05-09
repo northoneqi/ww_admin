@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="PictureInfo">
+
+	<resultMap id="RM.PictureInfo" type="com.bw.fortcrop.model.PictureInfo">
+        <result property="picId" column="pic_id"/>
+        <result property="picPath" column="pic_path"/>
+        <result property="picName" column="pic_name"/>
+        <result property="picDisplayName" column="pic_display_name"/>
+        <result property="picUploadDate" column="pic_upload_date"/>
+        <result property="picType" column="pic_type"/>
+        <result property="picUuid" column="pic_uuid"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="PictureInfo.columns">
+	    <![CDATA[
+		pic_id,pic_path,pic_name,pic_display_name,pic_upload_date,pic_type,pic_uuid
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="PictureInfo.insert" useGeneratedKeys="true" keyProperty="picId">
+    <![CDATA[
+        INSERT INTO bw_picture_info (
+        	pic_id ,
+        	pic_path ,
+        	pic_name ,
+        	pic_display_name ,
+        	pic_upload_date ,
+        	pic_type ,
+        	pic_uuid 
+        ) VALUES (
+        	#{picId} ,
+        	#{picPath} ,
+        	#{picName} ,
+        	#{picDisplayName} ,
+        	#{picUploadDate} ,
+        	#{picType} ,
+        	#{picUuid} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="PictureInfo.update" >
+    <![CDATA[
+        UPDATE bw_picture_info SET
+	        pic_path = #{picPath} ,
+	        pic_name = #{picName} ,
+	        pic_display_name = #{picDisplayName} ,
+	        pic_upload_date = #{picUploadDate} ,
+	        pic_type = #{picType} ,
+	        pic_uuid = #{picUuid} 
+        WHERE 
+	        pic_id = #{picId} 
+    ]]>
+	</update>
+
+    <delete id="PictureInfo.delete">
+    <![CDATA[
+        DELETE FROM bw_picture_info WHERE
+        pic_id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="PictureInfo.getById" resultMap="RM.PictureInfo">
+		SELECT <include refid="PictureInfo.columns" />
+	    <![CDATA[
+		    FROM bw_picture_info 
+	        WHERE 
+		        pic_id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="PictureInfo.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(picId)">
+				AND pic_id = #{picId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(picPath)">
+				AND pic_path = #{picPath}
+			</if>
+	       <if test="@Ognl@isNotEmpty(picName)">
+				AND pic_name = #{picName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(picDisplayName)">
+				AND pic_display_name = #{picDisplayName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(picUploadDateBegin)">
+				AND pic_upload_date >= #{picUploadDateBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(picUploadDateEnd)">
+				AND pic_upload_date &lt;= #{picUploadDateEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(picType)">
+				AND pic_type = #{picType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(picUuid)">
+				AND pic_uuid = #{picUuid}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="PictureInfo.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_picture_info 
+		<include refid="PictureInfo.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="PictureInfo.findPage" resultMap="RM.PictureInfo">
+    	SELECT <include refid="PictureInfo.columns" />
+	    FROM bw_picture_info 
+		<include refid="PictureInfo.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+    <select id="PictureInfo.getByPicName" resultMap="RM.PictureInfo" parameterType="java.lang.String">
+	    SELECT <include refid="PictureInfo.columns"/>
+	    <![CDATA[
+	        FROM bw_picture_info where pic_name = #{picName}
+	    ]]>
+    </select>
+    	
+	<select id="PictureInfo.getByResultId" resultMap="RM.PictureInfo">
+		SELECT t1.*
+		<![CDATA[
+			FROM bw_picture_info t1, bw_professor_result t2
+			WHERE t1.pic_uuid = t2.pic_uuid AND t2.result_id=#{resultId}
+		]]>
+	</select>
+</mapper>
+

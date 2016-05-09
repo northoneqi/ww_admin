@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="ProjectBusines">
+
+	<resultMap id="RM.ProjectBusines" type="com.bw.fortcrop.model.ProjectBusines">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="investAmount" column="invest_amount"/>
+        <result property="investScope" column="invest_scope"/>
+        <result property="cooperateType" column="cooperate_type"/>
+        <result property="businesUnit" column="busines_unit"/>
+        <result property="projectAddress" column="project_address"/>
+        <result property="projectSay" column="project_say"/>
+        <result property="feasibleAnalyse" column="feasible_analyse"/>
+        <result property="benefitForecast" column="benefit_forecast"/>
+        <result property="ensureSupport" column="ensure_support"/>
+        <result property="createDate" column="create_date"/>
+        <result property="phoneMode" column="phone_mode"/>
+        <result property="remarks" column="remarks"/>
+        <result property="projectImages" column="project_images"/>
+        <result property="developDate" column="develop_date"/>
+        <result property="changeStatus" column="change_status"/>
+        <result property="tradeType" column="trade_type"/>
+        <result property="tradeWay" column="trade_way"/>
+        <result property="workProve" column="work_prove"/>
+        <result property="projectRemarks" column="project_remarks"/>
+        <result property="projectType" column="project_type"/>
+        <result property="projectFlag" column="project_flag"/>
+        <result property="overMoney" column="over_money"/>
+        <result property="picUuid" column="pic_uuid"/>
+        <result property="projectName" column="projectName"/>
+        <result property="hotLevel" column="hot_level"/>
+        <result property="hotOrNewest" column="hot_or_newest"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ProjectBusines.columns">
+	    <![CDATA[
+		id,user_id,project_name,invest_amount,invest_scope,cooperate_type,busines_unit,project_address,project_say,feasible_analyse,benefit_forecast,ensure_support,create_date,phone_mode,remarks,project_images,develop_date,change_status,trade_type,trade_way,work_prove,project_remarks,project_type,project_flag,over_money,pic_uuid,projectName,hot_level,hot_or_newest
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="ProjectBusines.insert" useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+        INSERT INTO bw_project_busines (
+        	id ,
+        	user_id ,
+        	project_name ,
+        	invest_amount ,
+        	invest_scope ,
+        	cooperate_type ,
+        	busines_unit ,
+        	project_address ,
+        	project_say ,
+        	feasible_analyse ,
+        	benefit_forecast ,
+        	ensure_support ,
+        	create_date ,
+        	phone_mode ,
+        	remarks ,
+        	project_images ,
+        	develop_date ,
+        	change_status ,
+        	trade_type ,
+        	trade_way ,
+        	work_prove ,
+        	project_remarks ,
+        	project_type ,
+        	project_flag ,
+        	over_money ,
+        	pic_uuid ,
+        	projectName ,
+        	hot_level ,
+        	hot_or_newest 
+        ) VALUES (
+        	#{id} ,
+        	#{userId} ,
+        	#{projectName} ,
+        	#{investAmount} ,
+        	#{investScope} ,
+        	#{cooperateType} ,
+        	#{businesUnit} ,
+        	#{projectAddress} ,
+        	#{projectSay} ,
+        	#{feasibleAnalyse} ,
+        	#{benefitForecast} ,
+        	#{ensureSupport} ,
+        	#{createDate} ,
+        	#{phoneMode} ,
+        	#{remarks} ,
+        	#{projectImages} ,
+        	#{developDate} ,
+        	#{changeStatus} ,
+        	#{tradeType} ,
+        	#{tradeWay} ,
+        	#{workProve} ,
+        	#{projectRemarks} ,
+        	#{projectType} ,
+        	#{projectFlag} ,
+        	#{overMoney} ,
+        	#{picUuid} ,
+        	#{projectName} ,
+        	#{hotLevel} ,
+        	#{hotOrNewest} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="ProjectBusines.update" >
+    <![CDATA[
+        UPDATE bw_project_busines SET
+	        user_id = #{userId} ,
+	        project_name = #{projectName} ,
+	        invest_amount = #{investAmount} ,
+	        invest_scope = #{investScope} ,
+	        cooperate_type = #{cooperateType} ,
+	        busines_unit = #{businesUnit} ,
+	        project_address = #{projectAddress} ,
+	        project_say = #{projectSay} ,
+	        feasible_analyse = #{feasibleAnalyse} ,
+	        benefit_forecast = #{benefitForecast} ,
+	        ensure_support = #{ensureSupport} ,
+	        create_date = #{createDate} ,
+	        phone_mode = #{phoneMode} ,
+	        remarks = #{remarks} ,
+	        project_images = #{projectImages} ,
+	        develop_date = #{developDate} ,
+	        change_status = #{changeStatus} ,
+	        trade_type = #{tradeType} ,
+	        trade_way = #{tradeWay} ,
+	        work_prove = #{workProve} ,
+	        project_remarks = #{projectRemarks} ,
+	        project_type = #{projectType} ,
+	        project_flag = #{projectFlag} ,
+	        over_money = #{overMoney} ,
+	        pic_uuid = #{picUuid} ,
+	        projectName = #{projectName} ,
+	        hot_level = #{hotLevel} ,
+	        hot_or_newest = #{hotOrNewest} 
+        WHERE 
+	        id = #{id} 
+    ]]>
+	</update>
+
+    <delete id="ProjectBusines.delete">
+    <![CDATA[
+        DELETE FROM bw_project_busines WHERE
+        id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="ProjectBusines.getById" resultMap="RM.ProjectBusines">
+		SELECT <include refid="ProjectBusines.columns" />
+	    <![CDATA[
+		    FROM bw_project_busines 
+	        WHERE 
+		        id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="ProjectBusines.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(id)">
+				AND id = #{id}
+			</if>
+	       <if test="@Ognl@isNotEmpty(userId)">
+				AND user_id = #{userId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectName)">
+				AND project_name = #{projectName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(investAmount)">
+				AND invest_amount = #{investAmount}
+			</if>
+	       <if test="@Ognl@isNotEmpty(investScope)">
+				AND invest_scope = #{investScope}
+			</if>
+	       <if test="@Ognl@isNotEmpty(cooperateType)">
+				AND cooperate_type = #{cooperateType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(businesUnit)">
+				AND busines_unit = #{businesUnit}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectAddress)">
+				AND project_address = #{projectAddress}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectSay)">
+				AND project_say = #{projectSay}
+			</if>
+	       <if test="@Ognl@isNotEmpty(feasibleAnalyse)">
+				AND feasible_analyse = #{feasibleAnalyse}
+			</if>
+	       <if test="@Ognl@isNotEmpty(benefitForecast)">
+				AND benefit_forecast = #{benefitForecast}
+			</if>
+	       <if test="@Ognl@isNotEmpty(ensureSupport)">
+				AND ensure_support = #{ensureSupport}
+			</if>
+	       <if test="@Ognl@isNotEmpty(createDateBegin)">
+				AND create_date >= #{createDateBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(createDateEnd)">
+				AND create_date &lt;= #{createDateEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(phoneMode)">
+				AND phone_mode = #{phoneMode}
+			</if>
+	       <if test="@Ognl@isNotEmpty(remarks)">
+				AND remarks = #{remarks}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectImages)">
+				AND project_images = #{projectImages}
+			</if>
+	       <if test="@Ognl@isNotEmpty(developDateBegin)">
+				AND develop_date >= #{developDateBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(developDateEnd)">
+				AND develop_date &lt;= #{developDateEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(changeStatus)">
+				AND change_status = #{changeStatus}
+			</if>
+	       <if test="@Ognl@isNotEmpty(tradeType)">
+				AND trade_type = #{tradeType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(tradeWay)">
+				AND trade_way = #{tradeWay}
+			</if>
+	       <if test="@Ognl@isNotEmpty(workProve)">
+				AND work_prove = #{workProve}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectRemarks)">
+				AND project_remarks = #{projectRemarks}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectType)">
+				AND project_type = #{projectType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectFlag)">
+				AND project_flag = #{projectFlag}
+			</if>
+	       <if test="@Ognl@isNotEmpty(overMoney)">
+				AND over_money = #{overMoney}
+			</if>
+	       <if test="@Ognl@isNotEmpty(picUuid)">
+				AND pic_uuid = #{picUuid}
+			</if>
+	       <if test="@Ognl@isNotEmpty(projectName)">
+				AND projectName = #{projectName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(hotLevel)">
+				AND hot_level = #{hotLevel}
+			</if>
+	       <if test="@Ognl@isNotEmpty(hotOrNewest)">
+				AND hot_or_newest = #{hotOrNewest}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="ProjectBusines.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_project_busines 
+		<include refid="ProjectBusines.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="ProjectBusines.findPage" resultMap="RM.ProjectBusines">
+    	SELECT <include refid="ProjectBusines.columns" />
+	    FROM bw_project_busines 
+		<include refid="ProjectBusines.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

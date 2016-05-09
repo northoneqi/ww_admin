@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="AnnouncementInfo">
+
+	<resultMap id="RM.AnnouncementInfo" type="com.bw.fortcrop.model.AnnouncementInfo">
+        <result property="flowId" column="flow_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="announcementTitle" column="announcement_title"/>
+        <result property="announcementContent" column="announcement_content"/>
+        <result property="identitySign" column="identity_sign"/>
+        <result property="announcementTime" column="announcement_time"/>
+        <result property="userName" column="user_name"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="AnnouncementInfo.columns">
+	    <![CDATA[
+		flow_id,user_id,announcement_title,announcement_content,identity_sign,announcement_time
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="AnnouncementInfo.insert" useGeneratedKeys="true" keyProperty="flowId">
+    <![CDATA[
+        INSERT INTO bw_announcement_info (
+        	flow_id ,
+        	user_id ,
+        	announcement_title ,
+        	announcement_content ,
+        	identity_sign ,
+        	announcement_time 
+        ) VALUES (
+        	#{flowId} ,
+        	#{userId} ,
+        	#{announcementTitle} ,
+        	#{announcementContent} ,
+        	#{identitySign} ,
+        	#{announcementTime} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="AnnouncementInfo.update" >
+    <![CDATA[
+        UPDATE bw_announcement_info SET
+	        user_id = #{userId} ,
+	        announcement_title = #{announcementTitle} ,
+	        announcement_content = #{announcementContent} ,
+	        identity_sign = #{identitySign} ,
+	        announcement_time = #{announcementTime} 
+        WHERE 
+	        flow_id = #{flowId} 
+    ]]>
+	</update>
+
+    <delete id="AnnouncementInfo.delete">
+    <![CDATA[
+        DELETE FROM bw_announcement_info WHERE
+        flow_id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="AnnouncementInfo.getById" resultMap="RM.AnnouncementInfo">
+		SELECT <include refid="AnnouncementInfo.columns" />
+	    <![CDATA[
+		    FROM bw_announcement_info 
+	        WHERE 
+		        flow_id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="AnnouncementInfo.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(flowId)">
+				AND flow_id = #{flowId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(userId)">
+				AND user_id = #{userId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(announcementTitle)">
+				AND announcement_title like '%${announcementTitle}%'
+			</if>
+	       <if test="@Ognl@isNotEmpty(announcementContent)">
+				AND announcement_content = #{announcementContent}
+			</if>
+	       <if test="@Ognl@isNotEmpty(identitySign)">
+				AND identity_sign = #{identitySign}
+			</if>
+	       <if test="@Ognl@isNotEmpty(announcementTimeBegin)">
+				AND announcement_time >= #{announcementTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(announcementTimeEnd)">
+				AND announcement_time &lt;= #{announcementTimeEnd}
+		   </if>
+		</where>
+	</sql>
+		
+    <select id="AnnouncementInfo.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_announcement_info  
+		<include refid="AnnouncementInfo.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="AnnouncementInfo.findPage" resultMap="RM.AnnouncementInfo">
+    	SELECT a.*,u.*
+	    FROM bw_announcement_info a left join bw_user_info u on a.user_id = u.user_id
+		<include refid="AnnouncementInfo.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

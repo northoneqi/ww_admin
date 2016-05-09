@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="Independentmodule">
+
+	<resultMap id="RM.Independentmodule" type="com.bw.fortcrop.model.Independentmodule">
+        <result property="flowid" column="flowid"/>
+        <result property="plattsTitle" column="platts_title"/>
+        <result property="plattsDetail" column="platts_detail"/>
+        <result property="plattsDate" column="platts_date"/>
+        <result property="plattsSign" column="platts_sign"/>
+        <result property="plattsStatus" column="platts_status"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Independentmodule.columns">
+	    <![CDATA[
+		flowid,platts_title,platts_detail,platts_date,platts_sign,platts_status
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="Independentmodule.insert" useGeneratedKeys="true" keyProperty="flowid">
+    <![CDATA[
+        INSERT INTO independentmodule (
+        	flowid ,
+        	platts_title ,
+        	platts_detail ,
+        	platts_date ,
+        	platts_sign ,
+        	platts_status 
+        ) VALUES (
+        	#{flowid} ,
+        	#{plattsTitle} ,
+        	#{plattsDetail} ,
+        	#{plattsDate} ,
+        	#{plattsSign} ,
+        	#{plattsStatus} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+	
+	
+    <insert id="Independentmodule.saveentity" useGeneratedKeys="true" keyProperty="flowid">
+    <![CDATA[
+        INSERT INTO independentmodule (
+        	flowid ,
+        	platts_title ,
+        	platts_detail ,
+        	platts_date ,
+        	platts_sign ,
+        	platts_status 
+        ) VALUES (
+        	#{flowid} ,
+        	#{plattsTitle} ,
+        	#{plattsDetail} ,
+        	#{plattsDate} ,
+        	#{plattsSign} ,
+        	#{plattsStatus} 
+        )
+    ]]>
+	</insert>
+	
+	<update id="Independentmodule.update" >
+    <![CDATA[
+        UPDATE independentmodule SET
+	        platts_title = #{plattsTitle} ,
+	        platts_detail = #{plattsDetail} ,
+	        platts_date = #{plattsDate} ,
+	        platts_sign = #{plattsSign} ,
+	        platts_status = #{plattsStatus} 
+        WHERE 
+	        flowid = #{flowid} 
+    ]]>
+	</update>
+
+    <delete id="Independentmodule.delete">
+    <![CDATA[
+        DELETE FROM independentmodule WHERE
+        flowid = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="Independentmodule.getById" resultMap="RM.Independentmodule">
+		SELECT <include refid="Independentmodule.columns" />
+	    <![CDATA[
+		    FROM independentmodule 
+	        WHERE 
+		        flowid = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="Independentmodule.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(flowid)">
+				AND flowid = #{flowid}
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattsTitle)">
+				AND platts_title = #{plattsTitle}
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattsDetail)">
+				AND platts_detail = #{plattsDetail}
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattsDateBegin)">
+				AND platts_date >= #{plattsDateBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(plattsDateEnd)">
+				AND platts_date &lt;= #{plattsDateEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(plattsSign)">
+				AND platts_sign = #{plattsSign}
+			</if>
+	       <if test="@Ognl@isNotEmpty(plattsStatus)">
+				AND platts_status = #{plattsStatus}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="Independentmodule.findPage.count" resultType="long">
+        SELECT count(*) FROM independentmodule 
+		<include refid="Independentmodule.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="Independentmodule.findPage" resultMap="RM.Independentmodule">
+    	SELECT <include refid="Independentmodule.columns" />
+	    FROM independentmodule 
+		<include refid="Independentmodule.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="ProfessorInfo">
+
+	<resultMap id="RM.ProfessorInfo" type="com.bw.fortcrop.model.ProfessorInfo">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="professorName" column="professor_name"/>
+        <result property="logoImage" column="logo_image"/>
+        <result property="professorSex" column="professor_sex"/>
+        <result property="professorEducation" column="professor_education"/>
+        <result property="professorLocationOne" column="professor_location_one"/>
+        <result property="professorLocationTwo" column="professor_location_two"/>
+        <result property="professorLocationThree" column="professor_location_three"/>
+        <result property="professorBusiness" column="professor_business"/>
+        <result property="introduction" column="introduction"/>
+        <result property="bornday" column="bornday"/>
+        <result property="professionaltitle" column="professionaltitle"/>
+        <result property="goodfield" column="goodfield"/>
+        <result property="professorCompanyCode" column="professor_company_code"/>
+        <result property="company" column="company"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="addressdetail" column="addressdetail"/>
+        <result property="labelsign" column="labelsign"/>
+        <result property="signTime" column="sign_time"/>
+        <result property="ralName" column="ral_name"/>
+        <result property="usefulPhone" column="useful_phone"/>
+        <result property="jurisdiction" column="jurisdiction"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ProfessorInfo.columns">
+	    <![CDATA[
+		id,user_id,professor_name,logo_image,professor_sex,professor_education,professor_location_one,professor_location_two,professor_location_three,professor_business,introduction,bornday,professionaltitle,goodfield,professor_company_code,company,phone,email,addressdetail,labelsign,sign_time,ral_name,useful_phone,jurisdiction
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="ProfessorInfo.insert" useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+        INSERT INTO bw_professor_info (
+        	id ,
+        	user_id ,
+        	professor_name ,
+        	logo_image ,
+        	professor_sex ,
+        	professor_education ,
+        	professor_location_one ,
+        	professor_location_two ,
+        	professor_location_three ,
+        	professor_business ,
+        	introduction ,
+        	bornday ,
+        	professionaltitle ,
+        	goodfield ,
+        	professor_company_code ,
+        	company ,
+        	phone ,
+        	email ,
+        	addressdetail ,
+        	labelsign ,
+        	sign_time ,
+        	ral_name ,
+        	useful_phone ,
+        	jurisdiction 
+        ) VALUES (
+        	#{id} ,
+        	#{userId} ,
+        	#{professorName} ,
+        	#{logoImage} ,
+        	#{professorSex} ,
+        	#{professorEducation} ,
+        	#{professorLocationOne} ,
+        	#{professorLocationTwo} ,
+        	#{professorLocationThree} ,
+        	#{professorBusiness} ,
+        	#{introduction} ,
+        	#{bornday} ,
+        	#{professionaltitle} ,
+        	#{goodfield} ,
+        	#{professorCompanyCode} ,
+        	#{company} ,
+        	#{phone} ,
+        	#{email} ,
+        	#{addressdetail} ,
+        	#{labelsign} ,
+        	#{signTime} ,
+        	#{ralName} ,
+        	#{usefulPhone} ,
+        	#{jurisdiction} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="ProfessorInfo.update" >
+    <![CDATA[
+        UPDATE bw_professor_info SET
+	        user_id = #{userId} ,
+	        professor_name = #{professorName} ,
+	        logo_image = #{logoImage} ,
+	        professor_sex = #{professorSex} ,
+	        professor_education = #{professorEducation} ,
+	        professor_location_one = #{professorLocationOne} ,
+	        professor_location_two = #{professorLocationTwo} ,
+	        professor_location_three = #{professorLocationThree} ,
+	        professor_business = #{professorBusiness} ,
+	        introduction = #{introduction} ,
+	        bornday = #{bornday} ,
+	        professionaltitle = #{professionaltitle} ,
+	        goodfield = #{goodfield} ,
+	        professor_company_code = #{professorCompanyCode} ,
+	        company = #{company} ,
+	        phone = #{phone} ,
+	        email = #{email} ,
+	        addressdetail = #{addressdetail} ,
+	        labelsign = #{labelsign} ,
+	        sign_time = #{signTime} ,
+	        ral_name = #{ralName} ,
+	        useful_phone = #{usefulPhone} ,
+	        jurisdiction = #{jurisdiction} 
+        WHERE 
+	        id = #{id} 
+    ]]>
+	</update>
+
+    <delete id="ProfessorInfo.delete">
+    <![CDATA[
+        DELETE FROM bw_professor_info WHERE
+        id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="ProfessorInfo.getById" resultMap="RM.ProfessorInfo">
+		SELECT <include refid="ProfessorInfo.columns" />
+	    <![CDATA[
+		    FROM bw_professor_info 
+	        WHERE 
+		        id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="ProfessorInfo.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(id)">
+				AND id = #{id}
+			</if>
+	       <if test="@Ognl@isNotEmpty(userId)">
+				AND user_id = #{userId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorName)">
+				AND professor_name = #{professorName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(logoImage)">
+				AND logo_image = #{logoImage}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorSex)">
+				AND professor_sex = #{professorSex}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorEducation)">
+				AND professor_education = #{professorEducation}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorLocationOne)">
+				AND professor_location_one = #{professorLocationOne}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorLocationTwo)">
+				AND professor_location_two = #{professorLocationTwo}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorLocationThree)">
+				AND professor_location_three = #{professorLocationThree}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorBusiness)">
+				AND professor_business = #{professorBusiness}
+			</if>
+	       <if test="@Ognl@isNotEmpty(introduction)">
+				AND introduction = #{introduction}
+			</if>
+	       <if test="@Ognl@isNotEmpty(bornday)">
+				AND bornday = #{bornday}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professionaltitle)">
+				AND professionaltitle = #{professionaltitle}
+			</if>
+	       <if test="@Ognl@isNotEmpty(goodfield)">
+				AND goodfield = #{goodfield}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorCompanyCode)">
+				AND professor_company_code = #{professorCompanyCode}
+			</if>
+	       <if test="@Ognl@isNotEmpty(company)">
+				AND company = #{company}
+			</if>
+	       <if test="@Ognl@isNotEmpty(phone)">
+				AND phone = #{phone}
+			</if>
+	       <if test="@Ognl@isNotEmpty(email)">
+				AND email = #{email}
+			</if>
+	       <if test="@Ognl@isNotEmpty(addressdetail)">
+				AND addressdetail = #{addressdetail}
+			</if>
+	       <if test="@Ognl@isNotEmpty(labelsign)">
+				AND labelsign = #{labelsign}
+			</if>
+	       <if test="@Ognl@isNotEmpty(signTimeBegin)">
+				AND sign_time >= #{signTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(signTimeEnd)">
+				AND sign_time &lt;= #{signTimeEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(ralName)">
+				AND ral_name = #{ralName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(usefulPhone)">
+				AND useful_phone = #{usefulPhone}
+			</if>
+	       <if test="@Ognl@isNotEmpty(jurisdiction)">
+				AND jurisdiction = #{jurisdiction}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="ProfessorInfo.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_professor_info 
+		<include refid="ProfessorInfo.findPage.where"/>    
+    </select>
+    
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="ProfessorInfo.findPage" resultMap="RM.ProfessorInfo">
+    	SELECT <include refid="ProfessorInfo.columns" />
+	    FROM bw_professor_info 
+		<include refid="ProfessorInfo.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+    <select id="ProfessorInfo.getByUserId" resultMap="RM.ProfessorInfo" parameterType="java.lang.String">
+	    SELECT <include refid="ProfessorInfo.columns"/>
+	    <![CDATA[
+	        FROM bw_professor_info where user_id = #{userId}
+	    ]]>
+    </select>
+    
+	<delete id="ProfessorInfo.delete.byUserId">
+		<![CDATA[
+			DELETE FROM bw_professor_info WHERE
+        	user_id = #{userId}
+		]]>
+	</delete>
+</mapper>
+

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 不使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="CompanyInfo">
+
+	<resultMap id="RM.CompanyInfo" type="com.bw.fortcrop.model.CompanyInfo">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="logoImage" column="logo_image"/>
+        <result property="companyName" column="company_name"/>
+        <result property="linkmanPhone" column="linkman_phone"/>
+        <result property="linkMan" column="link_man"/>
+        <result property="professorLocationOne" column="professor_location_one"/>
+        <result property="professorLocationTwo" column="professor_location_two"/>
+        <result property="professorBusiness" column="professor_business"/>
+        <result property="registrationType" column="registration_type"/>
+        <result property="registrationMoney" column="registration_money"/>
+        <result property="registrationDate" column="registration_date"/>
+        <result property="servicesscope" column="servicesscope"/>
+        <result property="companysite" column="companysite"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="addressdetail" column="addressdetail"/>
+        <result property="companyType" column="company_type"/>
+        <result property="companyNum" column="company_num"/>
+        <result property="labelsign" column="labelsign"/>
+        <result property="compayIntroduce" column="compay_introduce"/>
+        <result property="compayProduct" column="compay_product"/>
+        <result property="certificationStatus" column="certification_status"/>
+        <result property="signTime" column="sign_time"/>
+        <result property="validFlag" column="valid_flag"/>
+        <result property="deleteflag" column="deleteflag"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="CompanyInfo.columns">
+	    <![CDATA[
+		id,user_id,logo_image,company_name,linkman_phone,link_man,professor_location_one,professor_location_two,professor_business,registration_type,registration_money,registration_date,servicesscope,companysite,phone,email,addressdetail,company_type,company_num,labelsign,compay_introduce,compay_product,certification_status,sign_time,valid_flag,deleteflag
+	    ]]>
+	</sql>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="CompanyInfo.insert" useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+        INSERT INTO bw_company_info (
+        	id ,
+        	user_id ,
+        	logo_image ,
+        	company_name ,
+        	linkman_phone ,
+        	link_man ,
+        	professor_location_one ,
+        	professor_location_two ,
+        	professor_business ,
+        	registration_type ,
+        	registration_money ,
+        	registration_date ,
+        	servicesscope ,
+        	companysite ,
+        	phone ,
+        	email ,
+        	addressdetail ,
+        	company_type ,
+        	company_num ,
+        	labelsign ,
+        	compay_introduce ,
+        	compay_product ,
+        	certification_status ,
+        	sign_time ,
+        	valid_flag ,
+        	deleteflag 
+        ) VALUES (
+        	#{id} ,
+        	#{userId} ,
+        	#{logoImage} ,
+        	#{companyName} ,
+        	#{linkmanPhone} ,
+        	#{linkMan} ,
+        	#{professorLocationOne} ,
+        	#{professorLocationTwo} ,
+        	#{professorBusiness} ,
+        	#{registrationType} ,
+        	#{registrationMoney} ,
+        	#{registrationDate} ,
+        	#{servicesscope} ,
+        	#{companysite} ,
+        	#{phone} ,
+        	#{email} ,
+        	#{addressdetail} ,
+        	#{companyType} ,
+        	#{companyNum} ,
+        	#{labelsign} ,
+        	#{compayIntroduce} ,
+        	#{compayProduct} ,
+        	#{certificationStatus} ,
+        	#{signTime} ,
+        	#{validFlag} ,
+        	#{deleteflag} 
+        )
+    ]]>
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+    
+	<update id="CompanyInfo.update" >
+    <![CDATA[
+        UPDATE bw_company_info SET
+	        user_id = #{userId} ,
+	        logo_image = #{logoImage} ,
+	        company_name = #{companyName} ,
+	        linkman_phone = #{linkmanPhone} ,
+	        link_man = #{linkMan} ,
+	        professor_location_one = #{professorLocationOne} ,
+	        professor_location_two = #{professorLocationTwo} ,
+	        professor_business = #{professorBusiness} ,
+	        registration_type = #{registrationType} ,
+	        registration_money = #{registrationMoney} ,
+	        registration_date = #{registrationDate} ,
+	        servicesscope = #{servicesscope} ,
+	        companysite = #{companysite} ,
+	        phone = #{phone} ,
+	        email = #{email} ,
+	        addressdetail = #{addressdetail} ,
+	        company_type = #{companyType} ,
+	        company_num = #{companyNum} ,
+	        labelsign = #{labelsign} ,
+	        compay_introduce = #{compayIntroduce} ,
+	        compay_product = #{compayProduct} ,
+	        certification_status = #{certificationStatus} ,
+	        sign_time = #{signTime} ,
+	        valid_flag = #{validFlag} ,
+	        deleteflag = #{deleteflag} 
+        WHERE 
+	        id = #{id} 
+    ]]>
+	</update>
+
+    <delete id="CompanyInfo.delete">
+    <![CDATA[
+        DELETE FROM bw_company_info WHERE
+        id = #{id} 
+    ]]>
+    </delete>
+    
+    <select id="CompanyInfo.getById" resultMap="RM.CompanyInfo">
+		SELECT <include refid="CompanyInfo.columns" />
+	    <![CDATA[
+		    FROM bw_company_info 
+	        WHERE 
+		        id = #{id} 
+	    ]]>
+	</select>
+	
+	<sql id="CompanyInfo.findPage.where">
+		<!-- ognl访问静态方法的表达式 为@class@method(args),以下为调用rapid中的Ognl.isNotEmpty()方法,还有其它方法如isNotBlank()可以使用，具体请查看Ognl类 -->
+		<where>	      				
+	       <if test="@Ognl@isNotEmpty(id)">
+				AND id = #{id}
+			</if>
+	       <if test="@Ognl@isNotEmpty(userId)">
+				AND user_id = #{userId}
+			</if>
+	       <if test="@Ognl@isNotEmpty(logoImage)">
+				AND logo_image = #{logoImage}
+			</if>
+	       <if test="@Ognl@isNotEmpty(companyName)">
+				AND company_name = #{companyName}
+			</if>
+	       <if test="@Ognl@isNotEmpty(linkmanPhone)">
+				AND linkman_phone = #{linkmanPhone}
+			</if>
+	       <if test="@Ognl@isNotEmpty(linkMan)">
+				AND link_man = #{linkMan}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorLocationOne)">
+				AND professor_location_one = #{professorLocationOne}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorLocationTwo)">
+				AND professor_location_two = #{professorLocationTwo}
+			</if>
+	       <if test="@Ognl@isNotEmpty(professorBusiness)">
+				AND professor_business = #{professorBusiness}
+			</if>
+	       <if test="@Ognl@isNotEmpty(registrationType)">
+				AND registration_type = #{registrationType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(registrationMoney)">
+				AND registration_money = #{registrationMoney}
+			</if>
+	       <if test="@Ognl@isNotEmpty(registrationDateBegin)">
+				AND registration_date >= #{registrationDateBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(registrationDateEnd)">
+				AND registration_date &lt;= #{registrationDateEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(servicesscope)">
+				AND servicesscope = #{servicesscope}
+			</if>
+	       <if test="@Ognl@isNotEmpty(companysite)">
+				AND companysite = #{companysite}
+			</if>
+	       <if test="@Ognl@isNotEmpty(phone)">
+				AND phone = #{phone}
+			</if>
+	       <if test="@Ognl@isNotEmpty(email)">
+				AND email = #{email}
+			</if>
+	       <if test="@Ognl@isNotEmpty(addressdetail)">
+				AND addressdetail = #{addressdetail}
+			</if>
+	       <if test="@Ognl@isNotEmpty(companyType)">
+				AND company_type = #{companyType}
+			</if>
+	       <if test="@Ognl@isNotEmpty(companyNum)">
+				AND company_num = #{companyNum}
+			</if>
+	       <if test="@Ognl@isNotEmpty(labelsign)">
+				AND labelsign = #{labelsign}
+			</if>
+	       <if test="@Ognl@isNotEmpty(compayIntroduce)">
+				AND compay_introduce = #{compayIntroduce}
+			</if>
+	       <if test="@Ognl@isNotEmpty(compayProduct)">
+				AND compay_product = #{compayProduct}
+			</if>
+	       <if test="@Ognl@isNotEmpty(certificationStatus)">
+				AND certification_status = #{certificationStatus}
+			</if>
+	       <if test="@Ognl@isNotEmpty(signTimeBegin)">
+				AND sign_time >= #{signTimeBegin}
+		   </if>
+		   <if test="@Ognl@isNotEmpty(signTimeEnd)">
+				AND sign_time &lt;= #{signTimeEnd}
+		   </if>
+	       <if test="@Ognl@isNotEmpty(validFlag)">
+				AND valid_flag = #{validFlag}
+			</if>
+	       <if test="@Ognl@isNotEmpty(deleteflag)">
+				AND deleteflag = #{deleteflag}
+			</if>
+		</where>
+	</sql>
+		
+    <select id="CompanyInfo.findPage.count" resultType="long">
+        SELECT count(*) FROM bw_company_info 
+		<include refid="CompanyInfo.findPage.where"/>    
+    </select>
+    
+    <select id="CompanyInfo.findbyuserid" resultMap="RM.CompanyInfo" >
+		SELECT <include refid="CompanyInfo.columns" />
+	    <![CDATA[
+		    FROM bw_company_info 
+	        WHERE 
+		        user_id = #{userId} 
+	    ]]>
+	</select>
+    <!--
+    	分页查询已经使用Dialect进行分页,也可以不使用Dialect直接编写分页
+    	因为分页查询将传 offset,pageSize,lastRows 三个参数,不同的数据库可以根于此三个参数属性应用不同的分页实现
+    -->
+    <select id="CompanyInfo.findPage" resultMap="RM.CompanyInfo">
+    	SELECT <include refid="CompanyInfo.columns" />
+	    FROM bw_company_info 
+		<include refid="CompanyInfo.findPage.where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+
+	
+</mapper>
+
